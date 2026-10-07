@@ -1,0 +1,31 @@
+<div class="slider" role="region" aria-roledescription="carousel" aria-label="Showroom photos" tabindex="0"
+  [style.--mx]="mx()" [style.--my]="my()"
+  (mouseenter)="paused.set(true)" (mouseleave)="paused.set(false); point(null)" (mousemove)="point($event)"
+  (focusin)="paused.set(true)" (focusout)="paused.set(false)"
+  (touchstart)="touchStart($event)" (touchend)="touchEnd($event)">
+  <div class="track" [style.transform]="'translateX(-' + current() * 100 + '%)'">
+    @for (s of slides; track s.src; let i = $index) {
+      <figure class="slide" [class.active]="i === current()" [style.--bg]="'url(' + s.src + ')'" role="group" aria-roledescription="slide"
+        [attr.aria-label]="(i + 1) + ' of ' + slides.length" [attr.aria-hidden]="i !== current()">
+        <div class="frame">
+          <img [src]="s.src" [alt]="s.alt" [attr.loading]="i === 0 ? 'eager' : 'lazy'">
+        </div>
+        <figcaption>
+          <span class="count">{{ (i + 1).toString().padStart(2, '0') }} <i>/ {{ slides.length.toString().padStart(2, '0') }}</i></span>
+          <span class="text">{{ s.caption }}</span>
+        </figcaption>
+      </figure>
+    }
+  </div>
+  <button class="arrow prev" type="button" aria-label="Previous photo" (click)="prev()">‹</button>
+  <button class="arrow next" type="button" aria-label="Next photo" (click)="next()">›</button>
+</div>
+<div class="dots">
+  @for (s of slides; track s.src; let i = $index) {
+    <button type="button" [class.on]="i === current()" [attr.aria-label]="'Show photo ' + (i + 1)"
+      [attr.aria-current]="i === current()" (click)="go(i)">
+      @if (i === current()) { <span [style.width.%]="progress() * 100"></span> }
+    </button>
+  }
+</div>
+<p class="sr" aria-live="polite">{{ slides[current()].caption }}</p>

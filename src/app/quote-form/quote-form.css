@@ -1,0 +1,19 @@
+:host{display:block}
+form{background:var(--card);border-radius:14px;padding:28px;border:1px solid var(--grout);display:grid;gap:20px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 20px}
+label{display:grid;gap:6px;font-weight:600;font-size:.95rem}
+input,textarea{font:400 1rem var(--body);color:var(--ink);background:var(--bone);border:1.5px solid var(--grout);border-radius:8px;padding:11px 13px;width:100%}
+input:focus,textarea:focus{outline:none;border-color:var(--cobalt)}
+input.ng-invalid.ng-touched,form.ng-submitted input.ng-invalid{border-color:#C8452F}
+small{color:#C8452F;font-weight:500}
+fieldset{border:0;padding:0;margin:0}
+legend{font-weight:600;font-size:.95rem;margin-bottom:10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:block;cursor:pointer}
+.chip input{position:absolute;opacity:0;width:1px;height:1px}
+.chip span{display:block;padding:8px 15px;border-radius:999px;border:1.5px solid var(--grout);font-weight:500;transition:background .2s,border-color .2s}
+.chip input:checked+span{background:var(--ink);color:var(--bone);border-color:var(--ink)}
+.chip input:focus-visible+span{outline:3px solid var(--saffron);outline-offset:2px}
+.actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.ok{color:var(--glaze);font-weight:500}
+@media(max-width:600px){.grid{grid-template-columns:1fr}form{padding:20px}}

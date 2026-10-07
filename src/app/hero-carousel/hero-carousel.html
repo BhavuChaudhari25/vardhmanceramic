@@ -1,0 +1,42 @@
+<section class="hero" role="region" aria-roledescription="carousel" aria-label="Highlights"
+  (mouseenter)="paused.set(true)" (mouseleave)="paused.set(false)"
+  (focusin)="paused.set(true)" (focusout)="paused.set(false)"
+  (touchstart)="touchStart($event)" (touchend)="touchEnd($event)">
+  <div class="track" [style.transform]="'translateX(-' + current() * 100 + '%)'">
+    @for (s of slides; track s.title; let i = $index) {
+      <div class="slide" [class.active]="i === current()" [style.--tone]="s.tone" role="group" aria-roledescription="slide"
+        [attr.aria-label]="(i + 1) + ' of ' + slides.length" [attr.aria-hidden]="i !== current()" [attr.inert]="i !== current() ? '' : null">
+        <div class="wrap inner">
+          <div class="copy">
+            @if (i === 0) {
+              <div class="status" [class.open]="isOpen()"><span class="dot"></span>{{ statusText() }}</div>
+            } @else {
+              <div class="eyebrow">{{ s.eyebrow }}</div>
+            }
+            @if (i === 0) { <h1>{{ s.title }}</h1> } @else { <h2>{{ s.title }}</h2> }
+            <p>{{ s.text }}</p>
+            <div class="cta">
+              <a class="btn light" [href]="s.cta.href">{{ s.cta.label }}</a>
+              <a class="btn ghost" href="#quote">Enquire now</a>
+            </div>
+          </div>
+          @if (s.photo) {
+            <figure class="photo"><img [src]="s.photo" alt="Vardhman showroom building from the main road"></figure>
+          } @else {
+            <div class="wall" aria-hidden="true">
+              @for (n of s.tiles; track $index) { <div class="t t{{ n }}" [style.--i]="$index"></div> }
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+  <button class="arrow prev" type="button" aria-label="Previous slide" (click)="prev()">‹</button>
+  <button class="arrow next" type="button" aria-label="Next slide" (click)="next()">›</button>
+  <div class="dots">
+    @for (s of slides; track s.title; let i = $index) {
+      <button type="button" [class.on]="i === current()" [attr.aria-label]="'Show slide ' + (i + 1)"
+        [attr.aria-current]="i === current()" (click)="go(i)"></button>
+    }
+  </div>
+</section>

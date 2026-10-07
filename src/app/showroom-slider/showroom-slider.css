@@ -1,0 +1,47 @@
+:host{display:block}
+.slider{--mx:0;--my:0;position:relative;overflow:hidden;background:var(--ink);aspect-ratio:16/9;max-height:min(78vh,760px);width:100%;touch-action:pan-y}
+.track{display:flex;height:100%;transition:transform .9s cubic-bezier(.77,0,.18,1)}
+.slide{position:relative;flex:0 0 100%;margin:0;height:100%;display:grid;place-items:center;overflow:hidden}
+.slide::before{content:'';position:absolute;inset:-60px;background:var(--bg) center/cover;filter:blur(24px) brightness(.55)}
+.frame{position:relative;height:100%;display:grid;place-items:center;transition:transform .6s cubic-bezier(.2,.8,.2,1),scale .9s cubic-bezier(.77,0,.18,1),opacity .9s,filter .9s}
+.slide img{display:block;max-width:100%;max-height:100%;width:auto;height:100%;object-fit:contain;box-shadow:0 18px 60px rgba(0,0,0,.45)}
+figcaption{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;gap:6px;padding:56px max(24px,calc(50% - 536px)) 22px;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.7))}
+.count{font:700 .8rem var(--body);letter-spacing:.14em;color:var(--saffron);display:flex;align-items:center;gap:10px}
+.count i{font-style:normal;color:rgba(255,255,255,.6)}
+.count::after{content:'';width:48px;height:2px;background:var(--saffron);transform-origin:left}
+.text{font:700 clamp(1.1rem,2.4vw,1.6rem)/1.2 var(--display);letter-spacing:-.01em;text-shadow:0 2px 14px rgba(0,0,0,.4)}
+.arrow{position:absolute;z-index:1;top:50%;translate:0 -50%;width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.14);backdrop-filter:blur(8px);color:#fff;font:400 2rem/1 var(--body);cursor:pointer;display:grid;place-items:center;padding-bottom:4px;transition:background .25s,color .25s,scale .25s}
+.arrow:hover{background:#fff;color:#16263A;scale:1.08}
+.prev{left:max(14px,calc(50% - 560px))}.next{right:max(14px,calc(50% - 560px))}
+.dots{display:flex;justify-content:center;gap:8px;margin-top:16px}
+.dots button{position:relative;overflow:hidden;width:10px;height:10px;padding:0;border:0;border-radius:999px;background:var(--grout);cursor:pointer;transition:width .4s cubic-bezier(.2,.8,.2,1),background .3s}
+.dots button:hover{background:var(--muted)}
+.dots button.on{width:44px;background:color-mix(in srgb,var(--cobalt) 30%,var(--grout))}
+.dots span{position:absolute;inset:0 auto 0 0;background:var(--cobalt);border-radius:inherit;transition:width .1s linear}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(max-width:600px){.slider{aspect-ratio:4/3}.arrow{width:38px;height:38px;font-size:1.6rem}figcaption{padding:40px 16px 14px}}
+
+@media (prefers-reduced-motion:no-preference){
+  /* Slides out of view sit back and dim; the incoming one comes forward as the track moves. */
+  .slide:not(.active) .frame{scale:.86;opacity:.5;filter:brightness(.7)}
+  /* Pointer parallax: the photo follows the cursor, the blurred backdrop drifts the other way. */
+  .active .frame{transform:translate(calc(var(--mx) * 14px),calc(var(--my) * 10px))}
+  .slide::before{transition:translate .6s cubic-bezier(.2,.8,.2,1)}
+  .active::before{translate:calc(var(--mx) * -30px) calc(var(--my) * -20px);animation:drift 12s ease-in-out infinite alternate}
+
+  /* Ken Burns: slow zoom with a pan whose direction changes from slide to slide. */
+  .active img{animation:kb 7s ease-out both;--x:-2%;--y:-1%}
+  .slide:nth-child(4n+2).active img{--x:2%;--y:1%}
+  .slide:nth-child(4n+3).active img{--x:-1.5%;--y:1.5%}
+  .slide:nth-child(4n+4).active img{--x:1.5%;--y:-1.5%}
+
+  /* Caption: counter line draws in, then the text rises out of a mask. */
+  .active .count{animation:rise .7s cubic-bezier(.2,.8,.2,1) .5s both}
+  .active .count::after{animation:draw .8s cubic-bezier(.2,.8,.2,1) .7s both}
+  .active .text{animation:reveal .9s cubic-bezier(.2,.8,.2,1) .65s both}
+}
+@keyframes kb{from{scale:1.12;translate:var(--x) var(--y)}to{scale:1.02;translate:0 0}}
+@keyframes drift{from{scale:1}to{scale:1.12}}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}}
+@keyframes draw{from{transform:scaleX(0)}}
+@keyframes reveal{from{opacity:0;transform:translateY(28px);clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 -20% 0)}}

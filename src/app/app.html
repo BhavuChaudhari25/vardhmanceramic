@@ -1,0 +1,165 @@
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top"><i></i>Vardhman Ceramic</a>
+    <button class="burger" type="button" aria-controls="menu" [attr.aria-expanded]="menuOpen()"
+      [attr.aria-label]="menuOpen() ? 'Close menu' : 'Open menu'" (click)="menuOpen.set(!menuOpen())">
+      <span></span><span></span><span></span>
+    </button>
+    <nav id="menu" [class.open]="menuOpen()" (click)="menuOpen.set(false)">
+      <a href="#collections">Collections</a>
+      <a href="#showroom">Showroom</a>
+      <a href="#catalogue">Catalogue</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#visit">Visit</a>
+      <a [href]="phoneHref" class="call">Call {{ phone }}</a>
+      <a href="#quote" class="btn enquire">Enquire</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <app-hero-carousel [statusText]="statusText" [isOpen]="isOpen" />
+
+  <div class="facts">
+    <div class="wrap">
+      @for (f of facts; track f.label) {
+        <div class="fact"><b>{{ f.value }}</b><span>{{ f.label }}</span></div>
+      }
+    </div>
+  </div>
+
+  <section class="s" id="collections">
+    <div class="wrap">
+      <h2>Our collections</h2>
+      <p class="sub">Everything for the floor, the wall and the bathroom, under one roof.</p>
+      @for (c of collections; track c.id; let odd = $odd) {
+        <article class="collection" [id]="c.id" [class.flip]="odd" [style.--c]="c.color"
+          (mouseenter)="pause(c, true)" (mouseleave)="pause(c, false)" (focusin)="pause(c, true)" (focusout)="pause(c, false)">
+          @if (photoFor(c); as p) {
+            <figure class="shot wide">
+              <button type="button" (click)="viewing.set(p)" [attr.aria-label]="'Enlarge ' + selectedItem(c) + ' photo'">
+                @for (q of [p]; track q.src) {
+                  <img [src]="q.thumb" [srcset]="q.thumb + ' 720w, ' + q.src + ' 1536w'" sizes="(max-width: 820px) 100vw, 50vw" [alt]="q.alt" [style.object-position]="q.position" loading="lazy">
+                }
+              </button>
+            </figure>
+          } @else {
+            <figure class="shot"><img [src]="c.photo" [alt]="c.alt" loading="lazy"></figure>
+          }
+          <div>
+            <span class="label">{{ c.label }}</span>
+            <h3>{{ c.title }}</h3>
+            <p>{{ c.text }}</p>
+            <ul class="items">
+              @for (item of c.items; track item) {
+                @if (c.itemPhotos?.[item]) {
+                  <li><button type="button" [class.on]="selectedItem(c) === item" [attr.aria-pressed]="selectedItem(c) === item" (click)="selectItem(c, item)">{{ item }}</button></li>
+                } @else {
+                  <li>{{ item }}</li>
+                }
+              }
+            </ul>
+            <a class="btn" href="#quote" (click)="enquireAbout(c)">Get a quote for {{ c.label.toLowerCase() }}</a>
+          </div>
+        </article>
+      }
+    </div>
+  </section>
+
+  @if (viewing(); as v) {
+    <div class="lightbox" role="dialog" aria-modal="true" aria-label="Enlarged photo" (click)="viewing.set(null)">
+      <figure (click)="$event.stopPropagation()">
+        <img [src]="v.src" [alt]="v.alt">
+      </figure>
+      <button type="button" class="close" aria-label="Close" (click)="viewing.set(null)" autofocus>&times;</button>
+    </div>
+  }
+
+  <section class="s gallery" id="showroom">
+    <div class="wrap">
+      <h2>Inside the showroom</h2>
+      <p class="sub">See the tiles and bathroom displays before you visit.</p>
+    </div>
+    <app-showroom-slider />
+  </section>
+
+  <section class="s cat" id="catalogue">
+    <div class="wrap">
+      <div>
+        <h2>From the catalogue</h2>
+        <p>A few of the products listed publicly. Ask us about stock, brands and prices.</p>
+      </div>
+      <div class="rows">
+        @for (r of catalogue; track r.name) {
+          <div class="row"><b>{{ r.name }}</b><span>{{ r.detail }}</span></div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="s quote" id="quote">
+    <div class="wrap">
+      <div>
+        <h2>Request a quote</h2>
+        <p>Tell us what you're planning and we'll get back to you with options and prices. Your enquiry opens in WhatsApp, ready to send.</p>
+        <p>Prefer to talk? Call <a [href]="phoneHref">{{ phone }}</a>.</p>
+      </div>
+      <app-quote-form [whatsapp]="whatsapp" [options]="quoteOptions" [(interests)]="interests" />
+    </div>
+  </section>
+
+  <section class="s reviews" id="reviews">
+    <div class="wrap">
+      <h2>What customers say</h2>
+      <p class="sub">Reviews from our Google Maps listing in Bardoli.</p>
+      <app-google-reviews />
+    </div>
+  </section>
+
+  <section class="s visit" id="visit">
+    <div class="wrap">
+      <div>
+        <h2>Visit the showroom</h2>
+        <dl>
+          <dt>Address</dt><dd>GJ SH 6, GIDC, Bardoli, Gujarat 394601</dd>
+          <dt>Also listed as</dt><dd>Opposite Garden Nursery, Bardoli Surat Road, Isroli, Surat 394620</dd>
+          <dt>Mobile</dt><dd><a [href]="phoneHref">{{ phone }}</a></dd>
+          <dt>Landline</dt><dd><a href="tel:0261220861">{{ landline }}</a></dd>
+        </dl>
+        <p class="note">Address details differ slightly between public listings. Please call before visiting, and confirm details before using them on an invoice or delivery.</p>
+      </div>
+      <iframe class="map" title="Map showing Vardhman Ceramic, Bardoli"
+        src="https://www.google.com/maps?q=Vardhman+Ceramic+Bardoli&output=embed"
+        loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+      <div class="hours">
+        <h3>Opening hours</h3>
+        @for (d of days; track d.name) {
+          <div [class.today]="d.index === today"><span>{{ d.name }}</span><span>{{ d.hours }}</span></div>
+        }
+        <a class="btn" target="_blank" rel="noopener" [href]="mapsUrl">Get directions</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap cols">
+    <div>
+      <a class="brand" href="#top"><i></i>Vardhman Ceramic</a>
+      <p>Tiles, sanitaryware, mirrors and countertops in Bardoli since 1997.</p>
+    </div>
+    <div>
+      <h4>Explore</h4>
+      @for (c of collections; track c.id) { <a [href]="'#' + c.id">{{ c.label }}</a> }
+      <a href="#showroom">Showroom photos</a>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <a [href]="phoneHref">{{ phone }}</a>
+      <a href="tel:0261220861">{{ landline }}</a>
+      <a [href]="'https://wa.me/' + whatsapp" target="_blank" rel="noopener">WhatsApp</a>
+      <a [href]="mapsUrl" target="_blank" rel="noopener">GJ SH 6, GIDC, Bardoli 394601</a>
+    </div>
+  </div>
+  <div class="wrap fine">© {{ year }} Vardhman Ceramic Bardoli, also listed as Vardhman Ceramics. Hours, ratings and product details come from public listings and may change.</div>
+</footer>

@@ -1,0 +1,40 @@
+<form #f="ngForm" (ngSubmit)="f.valid && submit()" novalidate>
+  <div class="grid">
+    <label>Name *
+      <input name="name" [(ngModel)]="form.name" required autocomplete="name" #name="ngModel">
+      @if (name.invalid && (name.touched || f.submitted)) { <small>Please enter your name.</small> }
+    </label>
+    <label>Phone *
+      <input name="phone" type="tel" [(ngModel)]="form.phone" required pattern="[+0-9 ]{10,15}" autocomplete="tel" #phone="ngModel">
+      @if (phone.invalid && (phone.touched || f.submitted)) { <small>Please enter a 10-digit mobile number.</small> }
+    </label>
+    <label>Email
+      <input name="email" type="email" [(ngModel)]="form.email" email autocomplete="email" #email="ngModel">
+      @if (email.invalid && (email.touched || f.submitted)) { <small>Please check the email address.</small> }
+    </label>
+    <label>City
+      <input name="city" [(ngModel)]="form.city" autocomplete="address-level2">
+    </label>
+  </div>
+
+  <fieldset>
+    <legend>I'm interested in</legend>
+    <div class="chips">
+      @for (o of options(); track o) {
+        <label class="chip">
+          <input type="checkbox" [checked]="interests().includes(o)" (change)="toggle(o, $any($event.target).checked)">
+          <span>{{ o }}</span>
+        </label>
+      }
+    </div>
+  </fieldset>
+
+  <label>Room size, quantity or anything else
+    <textarea name="message" rows="3" [(ngModel)]="form.message"></textarea>
+  </label>
+
+  <div class="actions">
+    <button class="btn" type="submit">Send enquiry on WhatsApp</button>
+    @if (sent()) { <span class="ok" role="status">WhatsApp opened in a new tab. Press send there to reach us.</span> }
+  </div>
+</form>
